@@ -3,17 +3,555 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uncles</title>
+    <title>Klipdrift - Choose Your Brandy Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --springbok-green: #007749;
+            --championship-gold: #FFB81C;
+            --deep-forest: #004D2F;
+            --charcoal: #333333;
+            --soft-cream: #F5F1E8;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--deep-forest) 0%, #1a1a1a 50%, var(--charcoal) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle pattern overlay */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255, 184, 28, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 119, 73, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .selection-container {
+            text-align: center;
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            margin-bottom: 60px;
+            color: white;
+        }
+
+        .rugby-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .brand-logo {
+            background: white;
+            display: inline-block;
+            padding: 20px 50px;
+            border-radius: 60px;
+            margin-bottom: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            border: 3px solid var(--championship-gold);
+        }
+
+        .header h1 {
+            font-size: 36px;
+            color: var(--springbok-green);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .header h2 {
+            font-size: 26px;
+            font-weight: 300;
+            color: var(--championship-gold);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .characters {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 50px;
+            margin-bottom: 50px;
+        }
+
+        .character-card {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 30px;
+            padding: 0;
+            border: 4px solid var(--championship-gold);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .character-card::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--championship-gold) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .character-card:hover::before {
+            opacity: 0.15;
+        }
+
+        .character-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 30px 80px rgba(255, 184, 28, 0.5);
+            border-color: var(--springbok-green);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .character-card:active {
+            transform: translateY(-10px) scale(1.01);
+        }
+
+        /* Avatar/illustration container */
+        .avatar-container {
+            width: 100%;
+            padding: 40px 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 3px solid var(--championship-gold);
+            position: relative;
+        }
+
+        .character-card:hover .avatar-container {
+            background: rgba(0, 119, 73, 0.2);
+            border-bottom-color: var(--springbok-green);
+        }
+
+        .character-illustration {
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 10px 30px rgba(255, 184, 28, 0.3));
+            transition: all 0.4s ease;
+        }
+
+        .character-card:hover .character-illustration {
+            filter: drop-shadow(0 15px 40px rgba(0, 119, 73, 0.5));
+            transform: scale(1.05);
+        }
+
+        /* Content section */
+        .character-content {
+            padding: 35px 30px 40px;
+        }
+
+        .character-name {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--championship-gold);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .character-tagline {
+            font-size: 17px;
+            font-style: italic;
+            color: var(--soft-cream);
+            margin-bottom: 25px;
+            padding: 0 15px;
+            min-height: 55px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .character-traits {
+            list-style: none;
+            margin-bottom: 30px;
+            padding: 0;
+            text-align: left;
+        }
+
+        .character-traits li {
+            font-size: 15px;
+            color: rgba(245, 241, 232, 0.9);
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-left: 4px solid var(--championship-gold);
+            background: linear-gradient(90deg, rgba(255, 184, 28, 0.15), transparent);
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+
+        .character-card:hover .character-traits li {
+            border-left-color: var(--springbok-green);
+            background: linear-gradient(90deg, rgba(0, 119, 73, 0.2), transparent);
+        }
+
+        .character-traits li::before {
+            content: "✓ ";
+            color: var(--championship-gold);
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .character-card:hover .character-traits li::before {
+            color: var(--springbok-green);
+        }
+
+        .select-btn {
+            background: linear-gradient(135deg, var(--springbok-green), var(--deep-forest));
+            color: white;
+            border: none;
+            padding: 18px 60px;
+            border-radius: 35px;
+            font-size: 17px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 119, 73, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .select-btn::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .select-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .select-btn:hover {
+            background: linear-gradient(135deg, var(--championship-gold), #D4A441);
+            color: var(--charcoal);
+            transform: scale(1.08);
+            box-shadow: 0 12px 35px rgba(255, 184, 28, 0.6);
+        }
+
+        .select-btn:active {
+            transform: scale(1.03);
+        }
+
+        .footer-note {
+            color: white;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-top: 40px;
+            padding: 25px 35px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 184, 28, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-note strong {
+            color: var(--championship-gold);
+            display: block;
+            margin-bottom: 8px;
+            font-size: 17px;
+        }
+
+        .switch-note {
+            margin-top: 10px;
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 6px solid rgba(255, 184, 28, 0.3);
+            border-top: 6px solid var(--championship-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 20px;
+            margin-top: 25px;
+            font-weight: 600;
+        }
+
+        .loading-uncle {
+            color: var(--championship-gold);
+            font-size: 24px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        @media (max-width: 900px) {
+            .characters {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .header h2 {
+                font-size: 20px;
+            }
+
+            .brand-logo {
+                padding: 15px 35px;
+            }
+
+            .character-card {
+                padding: 0;
+            }
+
+            .character-illustration {
+                max-width: 280px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .header h2 {
+                font-size: 16px;
+                letter-spacing: 2px;
+            }
+
+            .rugby-icon {
+                font-size: 36px;
+            }
+
+            .character-name {
+                font-size: 26px;
+            }
+
+            .character-tagline {
+                font-size: 15px;
+            }
+
+            .select-btn {
+                padding: 15px 45px;
+                font-size: 15px;
+            }
+
+            .character-illustration {
+                max-width: 240px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Our Uncles</h1>
-    <div>
-        <h2>Uncle Piet</h2>
-        <img src="./images/uncle-piet.png" alt="Uncle Piet">
+    <div class="selection-container">
+        <div class="header">
+            <div class="rugby-icon">🏉</div>
+            <div class="brand-logo">
+                <h1>KLIPDRIFT × SPRINGBOKS</h1>
+            </div>
+            <h2>Choose Your Brandy Guide</h2>
+        </div>
+
+        <div class="characters">
+            <!-- Uncle Piet -->
+            <div class="character-card" onclick="selectCharacter('piet')">
+                <div class="avatar-container">
+                    <img src="/mnt/user-data/uploads/piet.png" alt="Uncle Piet" class="character-illustration">
+                </div>
+                <div class="character-content">
+                    <h3 class="character-name">Uncle Piet</h3>
+                    <p class="character-tagline">"Ag boet, kom gesels oor lekker brandy!"</p>
+                    <ul class="character-traits">
+                        <li>Old-school Afrikaans charm</li>
+                        <li>Classic rugby stories & wisdom</li>
+                        <li>Warm humor & friendly banter</li>
+                        <li>Traditional South African soul</li>
+                    </ul>
+                    <button class="select-btn">Chat with Piet</button>
+                </div>
+            </div>
+
+            <!-- Uncle Khumalo -->
+            <div class="character-card" onclick="selectCharacter('khumalo')">
+                <div class="avatar-container">
+                    <img src="/mnt/user-data/uploads/Khumalo.png" alt="Uncle Khumalo" class="character-illustration">
+                </div>
+                <div class="character-content">
+                    <h3 class="character-name">Uncle Khumalo</h3>
+                    <p class="character-tagline">"Yebo! Let's celebrate together, my friend!"</p>
+                    <ul class="character-traits">
+                        <li>Township wisdom & pride</li>
+                        <li>Modern Springbok passion</li>
+                        <li>Ubuntu spirit & community</li>
+                        <li>Inspiring celebration</li>
+                    </ul>
+                    <button class="select-btn">Chat with Khumalo</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            <strong>🏆 Both guides are experts on Klipdrift and the Springboks!</strong>
+            Choose the personality that speaks to you. Each uncle brings their own unique charm and wisdom to help you discover our legendary 10 Year Old brandy.
+            <div class="switch-note">💬 You can always switch guides later if you'd like a different perspective.</div>
+        </div>
     </div>
-    <div>
-        <h2>Uncle Khumalo</h2>
-        <img src="./images/uncle-khumalo.png" alt="Uncle Khumalo">
+
+    <!-- Loading Screen -->
+    <div class="loading" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Connecting you to your guide...</div>
+        <div class="loading-uncle" id="loadingUncle"></div>
     </div>
+
+    <script>
+        function selectCharacter(character) {
+            // Show loading screen
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingUncle = document.getElementById('loadingUncle');
+            
+            loadingScreen.classList.add('active');
+            
+            if (character === 'piet') {
+                loadingUncle.textContent = 'Uncle Piet is pouring you a glass...';
+            } else {
+                loadingUncle.textContent = 'Uncle Khumalo is ready to celebrate...';
+            }
+            
+            // Store selection in localStorage
+            localStorage.setItem('selectedUncle', character);
+            
+            // Simulate loading time (adjust in production)
+            setTimeout(() => {
+                // Integration with Yoshimi platform
+                
+                // Option 1: Redirect to different experience URLs
+                if (character === 'piet') {
+                    console.log('Loading Uncle Piet personality...');
+                    // Redirect to Uncle Piet experience
+                    // window.location.href = 'https://yoshimi.space/faeri22/accounts/klipdrift/experience_designer.php?exp=GreenandGold-Piet';
+                    
+                    // For demo purposes:
+                    alert('🏉 Ag boet! Uncle Piet here. Ready to talk some lekker brandy?\n\nLet me tell you about our 10 Year Old - smoother than Naas Botha\'s drop goals, I\'m telling you!');
+                } else {
+                    console.log('Loading Uncle Khumalo personality...');
+                    // Redirect to Uncle Khumalo experience
+                    // window.location.href = 'https://yoshimi.space/faeri22/accounts/klipdrift/experience_designer.php?exp=GreenandGold-Khumalo';
+                    
+                    // For demo purposes:
+                    alert('🏉 Yebo! Uncle Khumalo here, my friend. Let\'s celebrate together!\n\nThis 10 Year Old is like Siya leading the Bokke - powerful, united, unforgettable!');
+                }
+                
+                // Alternative options:
+                // Option 2: Pass as URL parameter
+                // window.location.href = '/chat?uncle=' + character;
+                
+                // Option 3: Use API to set personality dynamically
+                // fetch('/api/set-personality', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ personality: character })
+                // }).then(() => window.location.href = '/chat');
+                
+                loadingScreen.classList.remove('active');
+            }, 2000);
+        }
+
+        // Optional: Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '1') selectCharacter('piet');
+            if (e.key === '2') selectCharacter('khumalo');
+        });
+
+        // Optional: Preload images
+        window.addEventListener('load', function() {
+            const images = [
+                '/mnt/user-data/uploads/piet.png',
+                '/mnt/user-data/uploads/Khumalo.png'
+            ];
+            images.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        });
+    </script>
 </body>
 </html>
